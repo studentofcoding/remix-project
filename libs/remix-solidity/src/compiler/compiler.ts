@@ -9,7 +9,8 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription
+  isFunctionDescription,
+  CompilerRetriggerMode
 } from './types'
 
 /*
@@ -33,6 +34,7 @@ export class Compiler {
       target: null,
       useFileConfiguration: false,
       configFileContent: '',
+      compilerRetriggerMode: CompilerRetriggerMode.none,
       lastCompilationResult: {
         data: null,
         source: null
@@ -47,7 +49,6 @@ export class Compiler {
     })
 
     this.event.register('compilationStarted', () => {
-      this.state.compilationStartTime = new Date().getTime()
     })
   }
 
@@ -85,6 +86,7 @@ export class Compiler {
 
   compile (files: Source, target: string): void {
     this.state.target = target
+    this.state.compilationStartTime = new Date().getTime()
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files)
   }
@@ -271,6 +273,9 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record <'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
+      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+        return
+      }
       switch (data.cmd) {
         case 'versionLoaded':
           if (data.data) this.onCompilerLoaded(data.data)

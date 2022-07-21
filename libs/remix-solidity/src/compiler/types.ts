@@ -154,6 +154,10 @@ export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | '
 
 export type Language = 'Solidity' | 'Yul'
 
+export enum CompilerRetriggerMode {
+  'none' ,
+  'retrigger'
+}
 export interface CompilerState {
     compileJSON: ((input: SourceWithTarget) => void) | null,
     worker: any,
@@ -166,6 +170,7 @@ export interface CompilerState {
     target: string | null,
     useFileConfiguration: boolean,
     configFileContent: string,
+    compilerRetriggerMode: CompilerRetriggerMode,
     lastCompilationResult: {
       data: CompilationResult | null,
       source: SourceWithTarget | null | undefined
@@ -182,6 +187,7 @@ export interface MessageToWorker {
   job?: number,
   input?: CompilerInput,
   data?: string
+  timestamp?: number
 }
 
 export interface MessageFromWorker {
@@ -190,6 +196,7 @@ export interface MessageFromWorker {
   missingInputs?: string[],
   input?: any,
   data?: string
+  timestamp?: number
 }
 
 export interface visitContractsCallbackParam {
