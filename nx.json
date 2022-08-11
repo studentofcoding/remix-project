@@ -193,10 +193,16 @@
     "remix-ui-permission-handler": {
       "tags": []
     },
+    "remix-ui-file-decorators": {
+      "tags": []
+    },
     "remix-ui-tooltip-popup": {
       "tags": []
     },
     "vyper": {
+      "tags": []
+    },
+    "etherscan": {
       "tags": []
     }
   },
